@@ -22,24 +22,25 @@ def get_section_info(section_id: str):
 
     section_id = section_id.lower()
 
-    response = requests.get("https://whos-my-ta.fly.dev/section_id/" + section_id)
-
-    # You can check out what the response body looks like in terminal using the print statement
+    response = requests.get(MICROSERVICE_LINK + section_id)
     data = response.json()
-    print(data)
+
     ta_name_list = data["ta_names"]
     ta1_name = ta_name_list[0]["fname"] + " " + ta_name_list[0]["lname"]
     ta2_name = ta_name_list[1]["fname"] + " " + ta_name_list[1]["lname"]
 
-    print(ta1_name)
-
-    # TODO
-    if section_id == "a":
-        return {
-            "section": "section_name",
-            "start_time": "HH:MM",
-            "end_time": "HH:MM",
-            "ta": ["taName1", "taName2"]
-        }
+    # Define recitation start and end times based on the section_id
+    if section_id in RECITATION_HOURS:
+        recitation_time = RECITATION_HOURS[section_id]
     else:
         raise HTTPException(status_code=404, detail="Invalid section id")
+
+    # Prepare the response JSON
+    response_data = {
+        "section": section_id,
+        "start_time": recitation_time.split("~")[0],
+        "end_time": recitation_time.split("~")[1],
+        "ta": [ta1_name, ta2_name]
+    }
+
+    return response_data

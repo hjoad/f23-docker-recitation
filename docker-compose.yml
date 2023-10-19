@@ -1,1 +1,12 @@
-
+version: '3.9'
+services:
+  my-fastapi-services:
+    container_name: whos-my-ta
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: myimage:latest
+    cpus: 1
+    mem_limit: 1024m
+    ports:
+      - "4568:4568"
